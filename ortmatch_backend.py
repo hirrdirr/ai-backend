@@ -1,7 +1,17 @@
 from fastapi import FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
 import httpx
 
 app = FastAPI()
+
+# 🔐 Tillåt bara din egen frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://www.hirrdirr.se"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 kommuner = []
 
@@ -23,8 +33,7 @@ async def load_kommuner():
             print(f"📄 Antal records: {len(records)}")
             for rec in records:
                 fields = rec.get("fields", {})
-                print(f"📍 Fält: {fields}")
-                namn = fields.get("kom_name")  # ← FIX HÄR
+                namn = fields.get("kom_name")
                 if namn:
                     kommuner.append(namn)
         print(f"✅ Laddade {len(kommuner)} kommuner")
