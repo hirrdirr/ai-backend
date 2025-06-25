@@ -19,7 +19,7 @@ async def load_kommuner():
     async with httpx.AsyncClient() as client:
         resp = await client.get(
             "https://public.opendatasoft.com/api/records/1.0/search/",
-            params={"dataset": "georef-sweden-tatort", "rows": 10000},
+            params={"dataset": "georef-sweden-tatorter", "rows": 10000},
             headers={"User-Agent": "Mozilla/5.0"}
         )
         data = resp.json()
