@@ -22,10 +22,12 @@ async def load_kommuner():
             records = data.get("records", [])
             print(f"📄 Antal records: {len(records)}")
             for rec in records:
-                fields = rec.get("fields", {})
-                namn = fields.get("kommunnamn")
-                if namn:
-                    kommuner.append(namn)
+    fields = rec.get("fields", {})
+    print(f"📍 Fält: {fields}")
+    namn = fields.get("kommunnamn")
+    if namn:
+        kommuner.append(namn)
+
         print(f"✅ Laddade {len(kommuner)} kommuner")
     except Exception as e:
         print(f"❌ Fel vid hämtning: {e}")
