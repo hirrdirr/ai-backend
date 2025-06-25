@@ -17,8 +17,11 @@ async def load_kommuner():
                 headers=headers
             )
             resp.raise_for_status()
-            data = resp.json().get("records", [])
-            for rec in data:
+            data = resp.json()
+            print(f"📦 JSON innehåll: {data.keys()}")
+            records = data.get("records", [])
+            print(f"📄 Antal records: {len(records)}")
+            for rec in records:
                 fields = rec.get("fields", {})
                 namn = fields.get("kommunnamn")
                 if namn:
