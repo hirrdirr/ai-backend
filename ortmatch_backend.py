@@ -9,7 +9,7 @@ kommuner = []
 async def load_kommuner():
     print("🔄 Hämtar kommuner...")
     try:
-        headers = {"User-Agent": "Mozilla/5.0"}  # <- VIKTIGT!
+        headers = {"User-Agent": "Mozilla/5.0"}
         async with httpx.AsyncClient() as client:
             resp = await client.get(
                 "https://public.opendatasoft.com/api/records/1.0/search/",
@@ -17,7 +17,12 @@ async def load_kommuner():
                 headers=headers
             )
             resp.raise_for_status()
-            kommuner.extend([rec["fields"]["kommunnamn"] for rec in resp.json()["records"]])
+            data = resp.json().get("records", [])
+            for rec in data:
+                fields = rec.get("fields", {})
+                namn = fields.get("kommunnamn")
+                if namn:
+                    kommuner.append(namn)
         print(f"✅ Laddade {len(kommuner)} kommuner")
     except Exception as e:
         print(f"❌ Fel vid hämtning: {e}")
