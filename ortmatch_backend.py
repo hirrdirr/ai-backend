@@ -5,7 +5,6 @@ import httpx
 app = FastAPI()
 kommuner = []
 
-# Tillåt CORS för frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -16,6 +15,7 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def load_kommuner():
+    print("🔄 Hämtar tätorter...")
     async with httpx.AsyncClient() as client:
         resp = await client.get(
             "https://public.opendatasoft.com/api/records/1.0/search/",
@@ -23,10 +23,15 @@ async def load_kommuner():
             headers={"User-Agent": "Mozilla/5.0"}
         )
         data = resp.json()
-        for rec in data.get("records", []):
-            namn = rec.get("fields", {}).get("ortnamn")
+        print("🧾 JSON-nycklar:", data.keys())
+        recs = data.get("records", [])
+        print("📄 Antal records:", len(recs))
+        for rec in recs:
+            fields = rec.get("fields", {})
+            namn = fields.get("ortnamn")
             if namn:
                 kommuner.append(namn)
+        print("✅ Laddade tätorter:", len(kommuner))
 
 @app.get("/match_ort")
 async def match_ort(q: str):
