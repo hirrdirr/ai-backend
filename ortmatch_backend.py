@@ -23,8 +23,8 @@ async def load_kommuner():
             print(f"📄 Antal records: {len(records)}")
             for rec in records:
                 fields = rec.get("fields", {})
-                print(f"📍 Fält: {fields}")  # ← Här loggar vi varje kommunpost
-                namn = fields.get("kommunnamn")  # Denna kommer vi justera snart
+                print(f"📍 Fält: {fields}")
+                namn = fields.get("kom_name")  # ← FIX HÄR
                 if namn:
                     kommuner.append(namn)
         print(f"✅ Laddade {len(kommuner)} kommuner")
