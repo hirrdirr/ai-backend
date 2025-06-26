@@ -1,6 +1,7 @@
+import json
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import httpx
 
 app = FastAPI()
 kommuner = []
@@ -15,23 +16,11 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def load_kommuner():
-    print("🔄 Hämtar tätorter...")
-    async with httpx.AsyncClient() as client:
-        resp = await client.get(
-            "https://public.opendatasoft.com/api/records/1.0/search/",
-            params={"dataset": "georef-sweden-kommuner", "rows": 10000},
-            headers={"User-Agent": "Mozilla/5.0"}
-        )
-        data = resp.json()
-        print("🧾 JSON-nycklar:", data.keys())
-        recs = data.get("records", [])
-        print("📄 Antal records:", len(recs))
-        for rec in recs:
-            fields = rec.get("fields", {})
-            namn = fields.get("ortnamn")
-            if namn:
-                kommuner.append(namn)
-        print("✅ Laddade tätorter:", len(kommuner))
+    print("🔄 Laddar tätorter från JSON...")
+    file_path = os.path.join(os.path.dirname(__file__), "alla_tatorter_scb_2023.json")
+    with open(file_path, encoding="utf-8") as f:
+        kommuner.extend(json.load(f))
+    print(f"✅ Laddade {len(kommuner)} tätorter från SCB-data")
 
 @app.get("/match_ort")
 async def match_ort(q: str):
